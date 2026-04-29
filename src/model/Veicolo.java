@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package view;
+package model;
 
 import java.time.LocalDate;
 
@@ -82,7 +82,7 @@ public abstract class Veicolo {
     }
 
     
-    //setters
+    //setters privv
     private void _setTarga(String targa) {
         if(targa.equals("") || targa.isEmpty() || targa.length() != 7)
             throw new IllegalArgumentException("Targa non corretta");
@@ -143,6 +143,53 @@ public abstract class Veicolo {
         this.consumo = consumo;
     }
 
+    
+    
+    //setters pubbliche
+    
+    public void setTarga(String targa) {
+        this.targa = targa;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public void setModello(String modello) {
+        this.modello = modello;
+    }
+
+    public void setAnno(int anno) {
+        this.anno = anno;
+    }
+
+    public void setKm(int km) {
+        this.km = km;
+    }
+
+    public void setScadenzaAssicurazione(LocalDate scadenzaAssicurazione) {
+        this.scadenzaAssicurazione = scadenzaAssicurazione;
+    }
+
+    public void setScadenzaRevisione(LocalDate scadenzaRevisione) {
+        this.scadenzaRevisione = scadenzaRevisione;
+    }
+
+    public void setScadenzaTagliando(LocalDate scadenzaTagliando) {
+        this.scadenzaTagliando = scadenzaTagliando;
+    }
+
+    public void setClasseEnergetica(String classeEnergetica) {
+        this.classeEnergetica = classeEnergetica;
+    }
+
+    public void setConsumo(double consumo) {
+        this.consumo = consumo;
+    }
+
+    
+    
+    
     @Override
     public String toString() {
         return  "targa=" + targa + ", marca=" + marca 
