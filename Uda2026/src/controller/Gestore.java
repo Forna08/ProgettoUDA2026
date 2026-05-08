@@ -6,6 +6,9 @@ package controller;
 
 import java.util.ArrayList;
 import model.Furgone;
+import javax.swing.*;
+import java.io.*;
+import java.util.*;
 
 /**
  *
@@ -36,4 +39,12 @@ public class Gestore {
             return false;
         return furgoni.remove(f);
     }    
+    
+    public void creaFile() throws IOException{
+        File csv = new File("veicoli.csv");
+        //possibile usare try catch per gestire l'eccezione
+        if(csv.createNewFile())
+            System.out.println("file creato");
+        else System.out.println("file già esistente");
+    }
 }
