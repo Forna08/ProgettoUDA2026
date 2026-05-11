@@ -348,6 +348,9 @@
         <Property name="toolTipText" type="java.lang.String" value="Veicolo"/>
         <Property name="name" type="java.lang.String" value="VehicleInput" noResource="true"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField10ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel11">
       <Properties>
