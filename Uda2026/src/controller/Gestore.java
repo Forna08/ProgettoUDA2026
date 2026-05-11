@@ -43,6 +43,9 @@ public class Gestore {
         return veicoli.remove(f);
     }    
     
+    
+    
+//......FILE....... 
     public void creaFile(String nome) throws IOException{
         File csv = new File(nome+".csv");
         //possibile usare try catch per gestire l'eccezione
@@ -89,10 +92,9 @@ public class Gestore {
         }
     }
     
-    public void salvaConNome(String nome){
-        File nuovo = new File(nome+".csv");
+    public void salvaConNome(){
         JFileChooser fc = new JFileChooser();
-        int ris = fc.showOpenDialog(null);
+        int ris = fc.showSaveDialog(null);
         
         if (ris == JFileChooser.APPROVE_OPTION) {
             try {
@@ -111,5 +113,102 @@ public class Gestore {
             }
         }
     }
+    
+    
+    public void salva() {
+        if (lista == null) {
+            salvaConNome();
+            return;
+        }
+    try {
+        PrintWriter pw = new PrintWriter(lista);
+
+        for (Veicolo v : veicoli) {
+            pw.print(v.getTarga()+";"+v.getMarca()+";"+v.getModello()+";"+
+                        v.getAnno()+";"+v.getKm()+";"+v.getScadenzaAssicurazione()+";"+
+                        v.getScadenzaRevisione()+";"+v.getScadenzaTagliando());
+            if(v instanceof Auto){
+                pw.println(((Auto) v).getPosti()+";"+((Auto) v).getTipo()+";"+
+                        ((Auto) v).getvMax()+((Auto) v).getColore());
+            } else if(v instanceof Furgone){
+                pw.println(((Furgone) v).getVolume()+";"+((Furgone) v).getAutonomia());
+            }
+        }
+        pw.close();
+        JOptionPane.showMessageDialog(null, "File salvato!");
+
+    } catch (FileNotFoundException e) {
+        JOptionPane.showMessageDialog(null, "Errore nel salvataggio!");
+        }
+    }
+    
+    public void esci() {
+        int scelta = JOptionPane.showConfirmDialog(
+            null,
+            "Uscire?",
+            "Conferma uscita",
+            JOptionPane.YES_NO_OPTION
+        );
+
+        if (scelta == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }    
+//......MODIFICA......
+public void visualizzaLista() {
+    if (veicoli.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "La lista è vuota!");
+        return;
+    }
+
+    StringBuilder sb = new StringBuilder();
+
+    // auto
+    sb.append("AUTO:\n");
+    sb.append("Targa;Marca;Modello;Anno;Km;ScadenzaAssicurazione;ScadenzaRevisione;ScadenzaTagliando;Posti;Tipo;VMax;Colore\n");
+    
+    for (Veicolo v : veicoli) {
+        if (v instanceof Auto) {
+            Auto a = (Auto) v;
+            sb.append(a.getTarga()+";"+a.getMarca()+";"+a.getModello()+";"+
+                      a.getAnno()+";"+a.getKm()+";"+a.getScadenzaAssicurazione()+";"+
+                      a.getScadenzaRevisione()+";"+a.getScadenzaTagliando()+";"+
+                      a.getPosti()+";"+a.getTipo()+";"+a.getvMax()+";"+a.getColore()+"\n");
+        }
+    }
+
+    // furgoni
+    sb.append("\nFURGONI:\n");
+    sb.append("Targa;Marca;Modello;Anno;Km;ScadenzaAssicurazione;ScadenzaRevisione;ScadenzaTagliando;Volume;Autonomia\n");
+    
+    for (Veicolo v : veicoli) {
+        if (v instanceof Furgone) {
+            Furgone f = (Furgone) v;
+            sb.append(f.getTarga()+";"+f.getMarca()+";"+f.getModello()+";"+
+                      f.getAnno()+";"+f.getKm()+";"+f.getScadenzaAssicurazione()+";"+
+                      f.getScadenzaRevisione()+";"+f.getScadenzaTagliando()+";"+
+                      f.getVolume()+";"+f.getAutonomia()+"\n");
+        }
+    }
+
+    JOptionPane.showMessageDialog(null, sb.toString(), "Lista Veicoli", JOptionPane.PLAIN_MESSAGE);
+}
+
+       
+    
+//..... INFO ......
+    public void about() {
+        JOptionPane.showMessageDialog(null,
+            "Gestionale per una flotta di auto composta da soli furgoni e auto appartenenti ad un'azienda",
+            "About", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void credits() {
+        JOptionPane.showMessageDialog(null,
+            "Sviluppata da:\nFornacciari Samuele\nBerni Alessio",
+            "Credits", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    
     }
     
