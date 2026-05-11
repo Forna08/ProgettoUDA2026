@@ -1,5 +1,11 @@
 package view;
 
+import controller.Gestore;
+import java.awt.*;
+import java.util.ArrayList;
+import javax.swing.*;
+import model.*;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -10,7 +16,9 @@ package view;
  * @author bernia
  */
 public class MainFrame extends javax.swing.JFrame {
-
+    
+    protected Gestore g = new Gestore();
+    
     /**
      * Creates new form InterfacciaGrafica
      */
@@ -125,17 +133,15 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void list1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_list1ActionPerformed
-        // TODO add your handling code here:
+        //ArrayList<Veicolo> lista = g.getVeicoli();
     }//GEN-LAST:event_list1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         new RicercaFrame().setVisible(true);
-        dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         new ModificaCatalogoFrame().setVisible(true);
-        dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
     
     /**
@@ -172,6 +178,9 @@ public class MainFrame extends javax.swing.JFrame {
                 new MainFrame().setVisible(true);
             }
         });
+        //g.creaFile();
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
