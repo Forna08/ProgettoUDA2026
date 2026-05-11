@@ -25,7 +25,7 @@ public abstract class Veicolo {
     //costruttore
     public Veicolo(String targa, String marca, String modello, int anno, int km, 
             LocalDate scadenzaAssicurazione, LocalDate scadenzaRevisione,
-            LocalDate scadenzaTagliando, String note, String classeEnergetica, double consumo) {
+            LocalDate scadenzaTagliando, String classeEnergetica, double consumo) {
         _setTarga(targa);
         _setMarca(marca);
         _setModello(modello);

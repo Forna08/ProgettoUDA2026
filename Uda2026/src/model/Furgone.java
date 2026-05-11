@@ -17,10 +17,10 @@ public class Furgone extends Veicolo {
     
     public Furgone(String targa, String marca, String modello, int anno,
             int km, LocalDate scadenzaAssicurazione, 
-            LocalDate scadenzaRevisione, LocalDate scadenzaTagliando, 
-            String note, String classeEnergetica, double consumo, int volume, int autonomia) {
+            LocalDate scadenzaRevisione, LocalDate scadenzaTagliando,
+            String classeEnergetica, double consumo, int volume, int autonomia) {
         super(targa, marca, modello, anno, km, scadenzaAssicurazione, 
-                scadenzaRevisione, scadenzaTagliando, note, classeEnergetica, consumo);
+                scadenzaRevisione, scadenzaTagliando, classeEnergetica, consumo);
         _setVolume(volume);
         _setAutonomia(autonomia);
     }

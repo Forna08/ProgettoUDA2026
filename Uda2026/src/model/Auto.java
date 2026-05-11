@@ -18,8 +18,8 @@ public class Auto extends Veicolo{
     
     public Auto(String targa, String marca, String modello, int anno, int km,
             LocalDate scadenzaAssicurazione, LocalDate scadenzaRevisione, 
-            LocalDate scadenzaTagliando, String note, String classeEnergetica, double consumo, int posti, String tipo, int vMax, String colore) {
-        super(targa, marca, modello, anno, km, scadenzaAssicurazione, scadenzaRevisione, scadenzaTagliando, note, classeEnergetica, consumo);
+            LocalDate scadenzaTagliando, String classeEnergetica, double consumo, int posti, String tipo, int vMax, String colore) {
+        super(targa, marca, modello, anno, km, scadenzaAssicurazione, scadenzaRevisione, scadenzaTagliando, classeEnergetica, consumo);
         _setPosti(posti);
         _setTipo(tipo);
         _setvMax(vMax);
