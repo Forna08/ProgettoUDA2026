@@ -16,28 +16,30 @@ import java.util.*;
  */
 public class Gestore {
     
-    private ArrayList<Furgone> furgoni;
+    private ArrayList<Veicolo> veicoli;
+    private File lista;
 
     public Gestore() {
-        furgoni = new ArrayList();
+        veicoli = new ArrayList();ù
+        lista = null;
     }
 
     //getter
-    public ArrayList<Furgone> getFurgoni() {
-        return (ArrayList<Furgone>)furgoni.clone();
+    public ArrayList<Veicolo> getVeicoli() {
+        return (ArrayList<Veicolo>)veicoli.clone();
     }
     
     
-    public boolean addFurgone(Furgone f){
+    public boolean addVeicolo(Veicolo f){
         if(f == null)
             return false;
-        return furgoni.add(f);
+        return veicoli.add(f);
     }
 
-    public boolean removeFurgone(Furgone f){
+    public boolean removeVecolo(Veicolo f){
         if(f == null)
             return false;
-        return furgoni.remove(f);
+        return veicoli.remove(f);
     }    
     
     public void creaFile() throws IOException{
@@ -46,5 +48,30 @@ public class Gestore {
         if(csv.createNewFile())
             System.out.println("file creato");
         else System.out.println("file già esistente");
+    }
+
+    public void LeggiFile(){
+        JFileChooser = fc = new JFileChooser();
+        int ris = fc.showOpenDialog(null);
+
+        if(ris == JFileChooser.APPROVE_OPTION){
+            lista = fc.getSelectedFile();
+
+            Scanner scanner = new Scanner(lista);
+            veicoli.claer();
+
+        while(scanner.hasNextLine()){
+            String line = scanner.nextLine();
+            if(linea.isEmpty(()) continue;
+            String[] = attr = line.split(";");
+            if(attr.length > 12)
+               //fino a attr[13] Auto a = new Auto(attr[0]);
+                
+        }
+        }
+
+
+
+            
     }
 }
