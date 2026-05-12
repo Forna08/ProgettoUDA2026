@@ -155,44 +155,47 @@ public class Gestore {
         }
     }    
 //......MODIFICA......
-public void visualizzaLista() {
-    if (veicoli.isEmpty()) {
-        JOptionPane.showMessageDialog(null, "La lista è vuota!");
-        return;
-    }
-
-    StringBuilder sb = new StringBuilder();
-
-    // auto
-    sb.append("AUTO:\n");
-    sb.append("Targa;Marca;Modello;Anno;Km;ScadenzaAssicurazione;ScadenzaRevisione;ScadenzaTagliando;Posti;Tipo;VMax;Colore\n");
     
-    for (Veicolo v : veicoli) {
-        if (v instanceof Auto) {
-            Auto a = (Auto) v;
-            sb.append(a.getTarga()+";"+a.getMarca()+";"+a.getModello()+";"+
-                      a.getAnno()+";"+a.getKm()+";"+a.getScadenzaAssicurazione()+";"+
-                      a.getScadenzaRevisione()+";"+a.getScadenzaTagliando()+";"+
-                      a.getPosti()+";"+a.getTipo()+";"+a.getvMax()+";"+a.getColore()+"\n");
+    
+    
+    
+    
+    public void visualizzaLista() {//visualizza prima le auto poi i furgoni
+        if (veicoli.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "La lista è vuota!");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        // auto
+        sb.append("AUTO:\n");
+        sb.append("Targa;Marca;Modello;Anno;Km;ScadenzaAssicurazione;ScadenzaRevisione;ScadenzaTagliando;Posti;Tipo;VelocitàMax;Colore\n");
+
+        for (Veicolo v : veicoli) {
+            if (v instanceof Auto) {
+                Auto a = (Auto) v;
+                sb.append(a.getTarga()+";"+a.getMarca()+";"+a.getModello()+";"+
+                          a.getAnno()+";"+a.getKm()+";"+a.getScadenzaAssicurazione()+";"+
+                          a.getScadenzaRevisione()+";"+a.getScadenzaTagliando()+";"+
+                          a.getPosti()+";"+a.getTipo()+";"+a.getvMax()+";"+a.getColore()+"\n");
+            }
+        }
+
+        // furgoni
+        sb.append("\nFURGONI:\n");
+        sb.append("Targa;Marca;Modello;Anno;Km;ScadenzaAssicurazione;ScadenzaRevisione;ScadenzaTagliando;Volume;Autonomia\n");
+
+        for (Veicolo v : veicoli) {
+            if (v instanceof Furgone) {
+                Furgone f = (Furgone) v;
+                sb.append(f.getTarga()+";"+f.getMarca()+";"+f.getModello()+";"+
+                          f.getAnno()+";"+f.getKm()+";"+f.getScadenzaAssicurazione()+";"+
+                          f.getScadenzaRevisione()+";"+f.getScadenzaTagliando()+";"+
+                          f.getVolume()+";"+f.getAutonomia()+"\n");
+            }
         }
     }
-
-    // furgoni
-    sb.append("\nFURGONI:\n");
-    sb.append("Targa;Marca;Modello;Anno;Km;ScadenzaAssicurazione;ScadenzaRevisione;ScadenzaTagliando;Volume;Autonomia\n");
-    
-    for (Veicolo v : veicoli) {
-        if (v instanceof Furgone) {
-            Furgone f = (Furgone) v;
-            sb.append(f.getTarga()+";"+f.getMarca()+";"+f.getModello()+";"+
-                      f.getAnno()+";"+f.getKm()+";"+f.getScadenzaAssicurazione()+";"+
-                      f.getScadenzaRevisione()+";"+f.getScadenzaTagliando()+";"+
-                      f.getVolume()+";"+f.getAutonomia()+"\n");
-        }
-    }
-
-    JOptionPane.showMessageDialog(null, sb.toString(), "Lista Veicoli", JOptionPane.PLAIN_MESSAGE);
-}
 
        
     
