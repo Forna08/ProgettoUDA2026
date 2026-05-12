@@ -28,23 +28,8 @@ public class Gestore {
     //getter
     public ArrayList<Veicolo> getVeicoli() {
         return (ArrayList<Veicolo>)veicoli.clone();
-    }
-    
-    
-    public boolean addVeicolo(Veicolo f){
-        if(f == null)
-            return false;
-        return veicoli.add(f);
-    }
-
-    public boolean removeVecolo(Veicolo f){
-        if(f == null)
-            return false;
-        return veicoli.remove(f);
-    }    
-    
-    
-    
+    }  
+ 
 //......FILE....... 
     public void creaFile(String nome) throws IOException{
         File csv = new File(nome+".csv");
@@ -156,9 +141,19 @@ public class Gestore {
     }    
 //......MODIFICA......
     
+    public boolean addVeicolo(Veicolo v){
+        if(v == null)
+            return false;
+        
+        return veicoli.add(v);
+    }
     
-    
-    
+    public boolean removeVeicolo(Veicolo v){
+        if(v == null)
+            return false;
+        
+        return veicoli.remove(v);
+    }   
     
     public void visualizzaLista() {//visualizza prima le auto poi i furgoni
         if (veicoli.isEmpty()) {
