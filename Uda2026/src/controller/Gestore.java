@@ -10,7 +10,6 @@ import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 import model.*;
-import java.io.FileWriter;
 /**
  *
  * @author aless
@@ -191,9 +190,7 @@ public class Gestore {
             }
         }
     }
-
-       
-    
+          
 //..... INFO ......
     public void about() {
         JOptionPane.showMessageDialog(null,
