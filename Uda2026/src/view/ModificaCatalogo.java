@@ -1,9 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 
+import controller.Gestore;
+import model.Veicolo;
+import model.Auto;
+import model.Furgone;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
@@ -15,26 +15,125 @@ import javax.swing.JTextField;
  * @author samuf
  */
 public class ModificaCatalogo extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ModificaCatalogo.class.getName());
-    //attributi per i campi auto o furgone da inserire
+
+    // attributi per i campi auto o furgone da inserire
     private JPanel panAuto;
     private JPanel panFurgone;
     private JTextField posti, tipoAuto, velMax, colore;
     private JTextField fVolume, fAutonomia;
+
+    // riferimenti passati da MainFrame
+    private Gestore g;
+    private MainFrame mainFrame;
+    private Veicolo veicoloInModifica; // null = inserimento, non-null = modifica
+
     /**
-     * Creates new form ModificaCatalogo
+     * Costruttore principale.
+     *
+     * @param g                  il Gestore condiviso
+     * @param mainFrame          la finestra principale (per aggiornare la tabella)
+     * @param veicoloInModifica  il veicolo da modificare, oppure null per inserirne uno nuovo
      */
-    public ModificaCatalogo() {
+    public ModificaCatalogo(Gestore g, MainFrame mainFrame, Veicolo veicoloInModifica) {
+        this.g = g;
+        this.mainFrame = mainFrame;
+        this.veicoloInModifica = veicoloInModifica;
+
         initComponents();
-        
+
         panContenitore.setLayout(new BorderLayout());
         creaPanAuto();
         creaPanFurgone();
         comboTipo.addActionListener(e -> aggiorna());
-/*la freccetta è "lambda" claudio mi ha detto che è una scorciatoia
-per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con questo affare(comboBox) */
+        /*la freccetta è "lambda" claudio mi ha detto che è una scorciatoia
+        per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con questo affare(comboBox) */
         aggiorna();
+
+        // se siamo in modalità modifica, pre-popola i campi
+        if (veicoloInModifica != null) {
+            prePopola();
+        }
+    }
+
+    /**
+     * Pre-popola tutti i campi con i valori del veicolo da modificare.
+     */
+    private void prePopola() {
+        Veicolo v = veicoloInModifica;
+
+        Targa.setText(v.getTarga());
+        Targa.setEditable(false); // la targa non si può cambiare
+        marca.setText(v.getMarca());
+        modello.setText(v.getModello());
+        anno.setText(String.valueOf(v.getAnno()));
+        km.setText(String.valueOf(v.getKm()));
+        assicurazione.setText(v.getScadenzaAssicurazione().toString());
+        revisione.setText(v.getScadenzaRevisione().toString());
+        tagliando.setText(v.getScadenzaTagliando().toString());
+        classeEnergetica.setText(v.getClasseEnergetica());
+        consumo.setText(String.valueOf(v.getConsumo()));
+
+        if (v instanceof Auto) {
+            comboTipo.setSelectedItem("Auto");
+            aggiorna();
+            Auto a = (Auto) v;
+            posti.setText(String.valueOf(a.getPosti()));
+            tipoAuto.setText(a.getTipo());
+            velMax.setText(String.valueOf(a.getvMax()));
+            colore.setText(a.getColore());
+        } else if (v instanceof Furgone) {
+            comboTipo.setSelectedItem("Furgone");
+            aggiorna();
+            Furgone f = (Furgone) v;
+            fVolume.setText(String.valueOf(f.getVolume()));
+            fAutonomia.setText(String.valueOf(f.getAutonomia()));
+        }
+    }
+
+    /**
+     * Raccoglie i dati dai campi, li passa al Gestore e aggiorna la tabella.
+     * L'array dati segue l'ordine atteso da costruisciVeicolo() nel Gestore:
+     * [0] targa  [1] marca  [2] modello  [3] anno  [4] km
+     * [5] assicurazione  [6] revisione  [7] tagliando
+     * [8] classeEnergetica  [9] consumo
+     * Auto:    [10] posti  [11] tipoAuto  [12] velMax  [13] colore
+     * Furgone: [10] volume [11] autonomia
+     */
+    private void eseguiConferma() {
+        String[] dati;
+
+        if ("Auto".equals(comboTipo.getSelectedItem())) {
+            dati = new String[]{
+                Targa.getText(), marca.getText(), modello.getText(),
+                anno.getText(), km.getText(),
+                assicurazione.getText(), revisione.getText(), tagliando.getText(),
+                classeEnergetica.getText(), consumo.getText(),
+                posti.getText(), tipoAuto.getText(), velMax.getText(), colore.getText()
+            };
+        } else {
+            dati = new String[]{
+                Targa.getText(), marca.getText(), modello.getText(),
+                anno.getText(), km.getText(),
+                assicurazione.getText(), revisione.getText(), tagliando.getText(),
+                classeEnergetica.getText(), consumo.getText(),
+                fVolume.getText(), fAutonomia.getText()
+            };
+        }
+
+        boolean ok;
+        if (veicoloInModifica == null) {
+            ok = g.inserisci(dati);
+        } else {
+            ok = g.modifica(veicoloInModifica, dati);
+        }
+
+        if (ok) {
+            mainFrame.aggiornaTabella(); // aggiorna la JTable nel MainFrame
+            this.dispose();              // chiude questa finestra
+        }
+        // se ok è false il Gestore ha già mostrato un messaggio di errore
     }
 
     /**
@@ -63,49 +162,49 @@ per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con quest
         jLabel7 = new javax.swing.JLabel();
         tagliando = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
+        classeEnergetica = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        consumo = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
         panContenitore = new javax.swing.JPanel();
         conferma = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(400, 670));
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(400, 750));
 
-        Targa.setText("\n");
         Targa.addActionListener(this::TargaActionPerformed);
-
         jLabel1.setText("Targa");
 
-        marca.setText("\n");
         marca.addActionListener(this::marcaActionPerformed);
-
         jLabel2.setText("Marca");
 
         comboTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Auto", "Furgone" }));
         comboTipo.addActionListener(this::comboTipoActionPerformed);
 
         modello.addActionListener(this::modelloActionPerformed);
-
         jLabel3.setText("Modello");
 
         anno.addActionListener(this::annoActionPerformed);
-
         jLabel4.setText("Anno");
 
         assicurazione.addActionListener(this::assicurazioneActionPerformed);
-
         jLabel5.setText("Scadenza assicurazione");
 
         revisione.addActionListener(this::revisioneActionPerformed);
-
         jLabel6.setText("Scadenza revisione");
 
         km.addActionListener(this::kmActionPerformed);
-
         jLabel7.setText("Km");
 
         tagliando.addActionListener(this::tagliandoActionPerformed);
-
         jLabel8.setText("Scadenza tagliando");
+
+        classeEnergetica.addActionListener(this::classeEnergeticaActionPerformed);
+        jLabel9.setText("Classe energetica");
+
+        consumo.addActionListener(this::consumoActionPerformed);
+        jLabel10.setText("Consumo (L/100km)");
 
         javax.swing.GroupLayout panContenitoreLayout = new javax.swing.GroupLayout(panContenitore);
         panContenitore.setLayout(panContenitoreLayout);
@@ -115,10 +214,11 @@ per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con quest
         );
         panContenitoreLayout.setVerticalGroup(
             panContenitoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 181, Short.MAX_VALUE)
+            .addGap(0, 120, Short.MAX_VALUE)
         );
 
         conferma.setText("Conferma");
+        conferma.addActionListener(this::confermaActionPerformed);
 
         jButton1.setText("Annulla");
         jButton1.addActionListener(this::jButton1ActionPerformed);
@@ -173,49 +273,65 @@ per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con quest
                                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGap(152, 152, 152)
                                     .addComponent(Targa, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(57, 57, 57)
+                                .addComponent(classeEnergetica, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(57, 57, 57)
+                                .addComponent(consumo, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(panContenitore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(23, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(45, Short.MAX_VALUE)
+                .addContainerGap(20, Short.MAX_VALUE)
                 .addComponent(comboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Targa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(marca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(modello, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(anno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(km, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(assicurazione, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(revisione, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(tagliando, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(classeEnergetica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(consumo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panContenitore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
+                .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(conferma)
                     .addComponent(jButton1))
@@ -223,7 +339,6 @@ per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con quest
         );
 
         getAccessibleContext().setAccessibleDescription("");
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -260,56 +375,54 @@ per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con quest
     }
 
     private void aggiorna() {
-    panContenitore.removeAll();
-
-    if ("Auto".equals(comboTipo.getSelectedItem())) {
-        panContenitore.add(panAuto, BorderLayout.CENTER);
-    } else {
-        panContenitore.add(panFurgone, BorderLayout.CENTER);
+        panContenitore.removeAll();
+        if ("Auto".equals(comboTipo.getSelectedItem())) {
+            panContenitore.add(panAuto, BorderLayout.CENTER);
+        } else {
+            panContenitore.add(panFurgone, BorderLayout.CENTER);
+        }
+        panContenitore.revalidate();
+        panContenitore.repaint();
     }
 
-    panContenitore.revalidate();
-    panContenitore.repaint();
-}
-    
     private void TargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TargaActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_TargaActionPerformed
 
     private void marcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_marcaActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_marcaActionPerformed
 
     private void comboTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboTipoActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_comboTipoActionPerformed
 
     private void modelloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelloActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_modelloActionPerformed
 
     private void annoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annoActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_annoActionPerformed
 
     private void assicurazioneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assicurazioneActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_assicurazioneActionPerformed
 
     private void revisioneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_revisioneActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_revisioneActionPerformed
 
     private void kmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kmActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_kmActionPerformed
 
     private void tagliandoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tagliandoActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event_tagliandoActionPerformed
 
+    private void classeEnergeticaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_classeEnergeticaActionPerformed
+    }//GEN-LAST:event_classeEnergeticaActionPerformed
+
+    private void consumoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consumoActionPerformed
+    }//GEN-LAST:event_consumoActionPerformed
+
+    private void confermaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confermaActionPerformed
+        eseguiConferma();
+    }//GEN-LAST:event_confermaActionPerformed
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -317,11 +430,6 @@ per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con quest
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -332,20 +440,20 @@ per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con quest
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ModificaCatalogo().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new ModificaCatalogo(new Gestore(), null, null).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField Targa;
     private javax.swing.JTextField anno;
     private javax.swing.JTextField assicurazione;
+    private javax.swing.JTextField classeEnergetica;
     private javax.swing.JComboBox<String> comboTipo;
     private javax.swing.JButton conferma;
+    private javax.swing.JTextField consumo;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -353,6 +461,7 @@ per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con quest
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField km;
     private javax.swing.JTextField marca;
     private javax.swing.JTextField modello;
