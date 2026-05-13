@@ -4,6 +4,12 @@
  */
 package view;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 /**
  *
  * @author samuf
@@ -11,12 +17,24 @@ package view;
 public class ModificaCatalogo extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ModificaCatalogo.class.getName());
-
+    //attributi per i campi auto o furgone da inserire
+    private JPanel panAuto;
+    private JPanel panFurgone;
+    private JTextField posti, tipoAuto, velMax, colore;
+    private JTextField fVolume, fAutonomia;
     /**
      * Creates new form ModificaCatalogo
      */
     public ModificaCatalogo() {
         initComponents();
+        
+        panContenitore.setLayout(new BorderLayout());
+        creaPanAuto();
+        creaPanFurgone();
+        comboTipo.addActionListener(e -> aggiorna());
+/*la freccetta è "lambda" claudio mi ha detto che è una scorciatoia
+per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con questo affare(comboBox) */
+        aggiorna();
     }
 
     /**
@@ -28,21 +46,272 @@ public class ModificaCatalogo extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        Targa = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        marca = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        comboTipo = new javax.swing.JComboBox<>();
+        modello = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        anno = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        assicurazione = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        revisione = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        km = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        tagliando = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        panContenitore = new javax.swing.JPanel();
+        conferma = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(400, 670));
+
+        Targa.setText("\n");
+        Targa.addActionListener(this::TargaActionPerformed);
+
+        jLabel1.setText("Targa");
+
+        marca.setText("\n");
+        marca.addActionListener(this::marcaActionPerformed);
+
+        jLabel2.setText("Marca");
+
+        comboTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Auto", "Furgone" }));
+        comboTipo.addActionListener(this::comboTipoActionPerformed);
+
+        modello.addActionListener(this::modelloActionPerformed);
+
+        jLabel3.setText("Modello");
+
+        anno.addActionListener(this::annoActionPerformed);
+
+        jLabel4.setText("Anno");
+
+        assicurazione.addActionListener(this::assicurazioneActionPerformed);
+
+        jLabel5.setText("Scadenza assicurazione");
+
+        revisione.addActionListener(this::revisioneActionPerformed);
+
+        jLabel6.setText("Scadenza revisione");
+
+        km.addActionListener(this::kmActionPerformed);
+
+        jLabel7.setText("Km");
+
+        tagliando.addActionListener(this::tagliandoActionPerformed);
+
+        jLabel8.setText("Scadenza tagliando");
+
+        javax.swing.GroupLayout panContenitoreLayout = new javax.swing.GroupLayout(panContenitore);
+        panContenitore.setLayout(panContenitoreLayout);
+        panContenitoreLayout.setHorizontalGroup(
+            panContenitoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 293, Short.MAX_VALUE)
+        );
+        panContenitoreLayout.setVerticalGroup(
+            panContenitoreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 181, Short.MAX_VALUE)
+        );
+
+        conferma.setText("Conferma");
+
+        jButton1.setText("Annulla");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(conferma)
+                        .addGap(40, 40, 40))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(152, 152, 152)
+                                .addComponent(km, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(152, 152, 152))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(57, 57, 57)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(modello, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(anno, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(152, 152, 152)
+                                .addComponent(marca, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jLabel8))
+                                .addGap(57, 57, 57)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(tagliando, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(assicurazione, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(revisione, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(comboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(152, 152, 152)
+                                    .addComponent(Targa, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(panContenitore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(23, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(45, Short.MAX_VALUE)
+                .addComponent(comboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Targa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(marca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(modello, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(anno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(km, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(assicurazione, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(revisione, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tagliando, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(panContenitore, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(conferma)
+                    .addComponent(jButton1))
+                .addGap(16, 16, 16))
         );
+
+        getAccessibleContext().setAccessibleDescription("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void creaPanAuto() {
+        panAuto = new JPanel(new GridLayout(0, 2, 5, 5));
+
+        panAuto.add(new JLabel("Posti"));
+        posti = new JTextField();
+        panAuto.add(posti);
+
+        panAuto.add(new JLabel("Tipo"));
+        tipoAuto = new JTextField();
+        panAuto.add(tipoAuto);
+
+        panAuto.add(new JLabel("Velocità max"));
+        velMax = new JTextField();
+        panAuto.add(velMax);
+
+        panAuto.add(new JLabel("Colore:"));
+        colore = new JTextField();
+        panAuto.add(colore);
+    }
+
+    private void creaPanFurgone() {
+        panFurgone = new JPanel(new GridLayout(0, 2, 5, 5));
+
+        panFurgone.add(new JLabel("Volume:"));
+        fVolume = new JTextField();
+        panFurgone.add(fVolume);
+
+        panFurgone.add(new JLabel("Autonomia:"));
+        fAutonomia = new JTextField();
+        panFurgone.add(fAutonomia);
+    }
+
+    private void aggiorna() {
+    panContenitore.removeAll();
+
+    if ("Auto".equals(comboTipo.getSelectedItem())) {
+        panContenitore.add(panAuto, BorderLayout.CENTER);
+    } else {
+        panContenitore.add(panFurgone, BorderLayout.CENTER);
+    }
+
+    panContenitore.revalidate();
+    panContenitore.repaint();
+}
+    
+    private void TargaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TargaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TargaActionPerformed
+
+    private void marcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_marcaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_marcaActionPerformed
+
+    private void comboTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboTipoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboTipoActionPerformed
+
+    private void modelloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelloActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_modelloActionPerformed
+
+    private void annoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_annoActionPerformed
+
+    private void assicurazioneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assicurazioneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_assicurazioneActionPerformed
+
+    private void revisioneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_revisioneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_revisioneActionPerformed
+
+    private void kmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kmActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_kmActionPerformed
+
+    private void tagliandoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tagliandoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tagliandoActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -70,5 +339,25 @@ public class ModificaCatalogo extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField Targa;
+    private javax.swing.JTextField anno;
+    private javax.swing.JTextField assicurazione;
+    private javax.swing.JComboBox<String> comboTipo;
+    private javax.swing.JButton conferma;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JTextField km;
+    private javax.swing.JTextField marca;
+    private javax.swing.JTextField modello;
+    private javax.swing.JPanel panContenitore;
+    private javax.swing.JTextField revisione;
+    private javax.swing.JTextField tagliando;
     // End of variables declaration//GEN-END:variables
 }
