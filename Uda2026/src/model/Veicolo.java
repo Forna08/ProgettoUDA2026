@@ -114,19 +114,19 @@ public abstract class Veicolo {
     }
 
     private void _setScadenzaAssicurazione(LocalDate scadenzaAssicurazione) {
-        if(scadenzaAssicurazione == null || scadenzaAssicurazione.isAfter(LocalDate.now()))
+        if(scadenzaAssicurazione == null || scadenzscadenzaAssicurazione.isBefore(LocalDate.now()))
             throw new IllegalArgumentException("Data di scadenza dell'assicurazione della macchina errata");
         this.scadenzaAssicurazione = scadenzaAssicurazione;
     }
 
     private void _setScadenzaRevisione(LocalDate ScadenzaRevisione) {
-        if(ScadenzaRevisione == null || ScadenzaRevisione.isAfter(LocalDate.now()))
+        if(ScadenzaRevisione == null || ScadenzaRevisione.isBefore(LocalDate.now()))
             throw new IllegalArgumentException("Data di scadenza della revisione della macchina errata");
         this.scadenzaRevisione = ScadenzaRevisione;
     }
 
     private void _setScadenzaTagliando(LocalDate ScadenzaTagliando) {
-        if(ScadenzaTagliando == null || ScadenzaTagliando.isAfter(LocalDate.now()))
+        if(ScadenzaTagliando == null || ScadenzaTagliando.isBefore(LocalDate.now()))
             throw new IllegalArgumentException("Data di scadenza del tagliando della macchina errata");
         this.scadenzaTagliando = ScadenzaTagliando;
     }
