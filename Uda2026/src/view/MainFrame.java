@@ -25,6 +25,60 @@ public class MainFrame extends javax.swing.JFrame {
         initComponents();
         // blocca il riordinamento delle colonne
         jTable1.getTableHeader().setReorderingAllowed(false);
+
+        // ── listener mancanti (non generati da NetBeans) ──────────────────
+
+        // File → Salva
+        jMenuItem2.addActionListener(e -> g.salva());
+
+        // File → Salva con nome
+        jMenuItem3.addActionListener(e -> g.salvaConNome());
+
+        // Elimina (bottone)
+        jButton2.addActionListener(e -> {
+            Veicolo sel = getVeicoloSelezionato();
+            if (sel == null) { g.NessunaSelezione(); return; }
+            if (g.confermaEliminazione()) {
+                g.removeVeicolo(sel);
+                aggiornaTabella();
+            }
+        });
+
+        // Edit → Inserisci
+        jMenuItem6.addActionListener(e -> apriModifica(null));
+
+        // Edit → Elimina
+        jMenuItem7.addActionListener(e -> {
+            Veicolo sel = getVeicoloSelezionato();
+            if (sel == null) { g.NessunaSelezione(); return; }
+            if (g.confermaEliminazione()) {
+                g.removeVeicolo(sel);
+                aggiornaTabella();
+            }
+        });
+
+        // Edit → Modifica
+        jMenuItem8.addActionListener(e -> {
+            Veicolo sel = getVeicoloSelezionato();
+            if (sel == null) { g.NessunaSelezione(); return; }
+            apriModifica(sel);
+        });
+
+        // Edit → Visualizza Lista
+        jMenuItem9.addActionListener(e -> g.visualizzaLista());
+
+        // Info → About
+        jMenuItem5.addActionListener(e -> g.about());
+
+        // Info → Credits
+        jMenuItem10.addActionListener(e -> g.credits());
+
+        // Cerca (bottone) - listener mancante nel blocco generato da NetBeans
+        jButton1.addActionListener(e -> {
+            String targa = jTextField1.getText();
+            String tipo  = (String) jComboBox1.getSelectedItem();
+            riempiTabella(g.cerca(targa, tipo));
+        });
     }
 
     /**
@@ -54,11 +108,10 @@ public class MainFrame extends javax.swing.JFrame {
 
     /**
      * Riempie la tabella con la lista passata come parametro.
-     * Usato sia da aggiornaTabella() (lista completa) sia da cerca (lista filtrata).
      */
     private void riempiTabella(ArrayList<Veicolo> lista) {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0); // svuota
+        model.setRowCount(0);
         for (Veicolo v : lista) {
             String tipo = (v instanceof Auto) ? "Automobile" : "Furgone";
             model.addRow(new Object[]{
@@ -249,20 +302,10 @@ public class MainFrame extends javax.swing.JFrame {
     // ── BOTTONI ───────────────────────────────────────────────────────────────────────
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // Cerca: chiede al Gestore la lista filtrata e la mostra in tabella
         String targa = jTextField1.getText();
         String tipo  = (String) jComboBox1.getSelectedItem();
         riempiTabella(g.cerca(targa, tipo));
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Veicolo sel = getVeicoloSelezionato();
-        if (sel == null) { g.NessunaSelezione(); return; }
-        if (g.confermaEliminazione()) {
-            g.removeVeicolo(sel);
-            aggiornaTabella();
-        }
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         Veicolo sel = getVeicoloSelezionato();
@@ -281,52 +324,9 @@ public class MainFrame extends javax.swing.JFrame {
         aggiornaTabella();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        g.salva();
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
-
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        g.salvaConNome();
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
-
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         g.esci();
     }//GEN-LAST:event_jMenuItem4ActionPerformed
-
-    // ── MENU EDIT ─────────────────────────────────────────────────────────────────────
-
-    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-        apriModifica(null);
-    }//GEN-LAST:event_jMenuItem6ActionPerformed
-
-    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        Veicolo sel = getVeicoloSelezionato();
-        if (sel == null) { g.NessunaSelezione(); return; }
-        if (g.confermaEliminazione()) {
-            g.removeVeicolo(sel);
-            aggiornaTabella();
-        }
-    }//GEN-LAST:event_jMenuItem7ActionPerformed
-
-    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        Veicolo sel = getVeicoloSelezionato();
-        if (sel == null) { g.NessunaSelezione(); return; }
-        apriModifica(sel);
-    }//GEN-LAST:event_jMenuItem8ActionPerformed
-
-    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
-        g.visualizzaLista();
-    }//GEN-LAST:event_jMenuItem9ActionPerformed
-
-    // ── MENU INFO ─────────────────────────────────────────────────────────────────────
-
-    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        g.about();
-    }//GEN-LAST:event_jMenuItem5ActionPerformed
-
-    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
-        g.credits();
-    }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // non serve codice: la ricerca scatta solo premendo "Cerca"
