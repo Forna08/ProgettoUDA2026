@@ -1,22 +1,76 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
+import controller.Gestore;
+import model.Auto;
+import model.Furgone;
+import model.Veicolo;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
 
 /**
  *
  * @author samuf
  */
 public class MainFrame extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
+
+    // il Gestore è condiviso con ModificaCatalogo
+    private Gestore g = new Gestore();
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
         initComponents();
+        // blocca il riordinamento delle colonne
+        jTable1.getTableHeader().setReorderingAllowed(false);
+    }
+
+    /**
+     * Aggiorna la JTable con tutti i veicoli presenti nel Gestore.
+     * Va chiamato ogni volta che la lista cambia.
+     */
+    public void aggiornaTabella() {
+        riempiTabella(g.getVeicoli());
+    }
+
+    /**
+     * Restituisce il Gestore condiviso.
+     */
+    public Gestore getGestore() {
+        return g;
+    }
+
+    /**
+     * Restituisce il veicolo corrispondente alla riga selezionata nella tabella.
+     */
+    private Veicolo getVeicoloSelezionato() {
+        int riga = jTable1.getSelectedRow();
+        if (riga == -1) return null;
+        String targa = (String) jTable1.getValueAt(riga, 0);
+        return g.getPerTarga(targa);
+    }
+
+    /**
+     * Riempie la tabella con la lista passata come parametro.
+     * Usato sia da aggiornaTabella() (lista completa) sia da cerca (lista filtrata).
+     */
+    private void riempiTabella(ArrayList<Veicolo> lista) {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); // svuota
+        for (Veicolo v : lista) {
+            String tipo = (v instanceof Auto) ? "Automobile" : "Furgone";
+            model.addRow(new Object[]{
+                v.getTarga(), tipo, v.getMarca(), v.getModello(),
+                v.getAnno(), v.getKm(),
+                v.getScadenzaAssicurazione(),
+                v.getScadenzaRevisione(),
+                v.getScadenzaTagliando(),
+                v.getClasseEnergetica(),
+                v.getConsumo()
+            });
+        }
     }
 
     /**
@@ -105,6 +159,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(jMenuItem3);
 
         jMenuItem4.setText("Esci");
+        jMenuItem4.addActionListener(this::jMenuItem4ActionPerformed);
         jMenu1.add(jMenuItem4);
 
         jMenuBar1.add(jMenu1);
@@ -153,8 +208,8 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(351, 351, 351)
+                        .addComponent(jButton1)
+                        .addGap(339, 339, 339)
                         .addComponent(jButton4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton3)
@@ -184,34 +239,103 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
-
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-        ModificaCatalogo popUp = new ModificaCatalogo();
+    // ── metodo helper ─────────────────────────────────────────────────────────────────
+    private void apriModifica(Veicolo v) {
+        ModificaCatalogo popUp = new ModificaCatalogo(g, this, v);
         popUp.setLocationRelativeTo(this);
         popUp.setVisible(true);
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }
+
+    // ── BOTTONI ───────────────────────────────────────────────────────────────────────
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // Cerca: chiede al Gestore la lista filtrata e la mostra in tabella
+        String targa = jTextField1.getText();
+        String tipo  = (String) jComboBox1.getSelectedItem();
+        riempiTabella(g.cerca(targa, tipo));
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        Veicolo sel = getVeicoloSelezionato();
+        if (sel == null) { g.NessunaSelezione(); return; }
+        if (g.confermaEliminazione()) {
+            g.removeVeicolo(sel);
+            aggiornaTabella();
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        Veicolo sel = getVeicoloSelezionato();
+        if (sel == null) { g.NessunaSelezione(); return; }
+        apriModifica(sel);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        apriModifica(null);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    // ── MENU FILE ─────────────────────────────────────────────────────────────────────
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        g.apri();
+        aggiornaTabella();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        g.salva();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        g.salvaConNome();
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        g.esci();
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    // ── MENU EDIT ─────────────────────────────────────────────────────────────────────
+
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        apriModifica(null);
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        Veicolo sel = getVeicoloSelezionato();
+        if (sel == null) { g.NessunaSelezione(); return; }
+        if (g.confermaEliminazione()) {
+            g.removeVeicolo(sel);
+            aggiornaTabella();
+        }
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        Veicolo sel = getVeicoloSelezionato();
+        if (sel == null) { g.NessunaSelezione(); return; }
+        apriModifica(sel);
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        g.visualizzaLista();
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    // ── MENU INFO ─────────────────────────────────────────────────────────────────────
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        g.about();
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        g.credits();
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // non serve codice: la ricerca scatta solo premendo "Cerca"
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -222,9 +346,6 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
     }
 
