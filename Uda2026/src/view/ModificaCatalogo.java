@@ -11,6 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
+ * Insert/edit window for a single vehicle.
+ * Collects field values and delegates all logic to {@link controller.Gestore}.
  *
  * @author samuf
  */
@@ -30,11 +32,9 @@ public class ModificaCatalogo extends javax.swing.JFrame {
     private Veicolo veicoloInModifica; // null = inserimento, non-null = modifica
 
     /**
-     * Costruttore principale.
-     *
-     * @param g                  il Gestore condiviso
-     * @param mainFrame          la finestra principale (per aggiornare la tabella)
-     * @param veicoloInModifica  il veicolo da modificare, oppure null per inserirne uno nuovo
+     * @param g                 shared Gestore instance
+     * @param mainFrame         main window reference (to refresh the table)
+     * @param veicoloInModifica vehicle to edit, or null for a new insertion
      */
     public ModificaCatalogo(Gestore g, MainFrame mainFrame, Veicolo veicoloInModifica) {
         this.g = g;
@@ -47,8 +47,6 @@ public class ModificaCatalogo extends javax.swing.JFrame {
         creaPanAuto();
         creaPanFurgone();
         comboTipo.addActionListener(e -> aggiorna());
-        /*la freccetta è "lambda" claudio mi ha detto che è una scorciatoia
-        per un metodo che viene chiamato(aggiorna) quando l'utente interagisce con questo affare(comboBox) */
         aggiorna();
 
         // se siamo in modalità modifica, pre-popola i campi
@@ -57,9 +55,7 @@ public class ModificaCatalogo extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Pre-popola tutti i campi con i valori del veicolo da modificare.
-     */
+    /** Pre-fills all fields with the values of the vehicle being edited. */
     private void prePopola() {
         Veicolo v = veicoloInModifica;
 
@@ -92,15 +88,7 @@ public class ModificaCatalogo extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Raccoglie i dati dai campi, li passa al Gestore e aggiorna la tabella.
-     * L'array dati segue l'ordine atteso da costruisciVeicolo() nel Gestore:
-     * [0] targa  [1] marca  [2] modello  [3] anno  [4] km
-     * [5] assicurazione  [6] revisione  [7] tagliando
-     * [8] classeEnergetica  [9] consumo
-     * Auto:    [10] posti  [11] tipoAuto  [12] velMax  [13] colore
-     * Furgone: [10] volume [11] autonomia
-     */
+    /** Collects field values, calls Gestore.inserisci() or Gestore.modifica(), then closes on success. */
     private void eseguiConferma() {
         String[] dati;
 
@@ -427,7 +415,9 @@ public class ModificaCatalogo extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
-     * @param args the command line arguments
+     * Stand-alone entry point for previewing this form.
+     *
+     * @param args command line arguments (unused)
      */
     public static void main(String args[]) {
         try {

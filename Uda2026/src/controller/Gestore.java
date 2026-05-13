@@ -10,9 +10,8 @@ import java.util.*;
 import model.*;
 
 /**
- * Gestore - controller principale dell'applicazione.
- * Contiene tutta la logica di business.
- * Le classi della view chiamano solo i metodi di questa classe.
+ * Main controller. Contains all business logic.
+ * View classes only call methods of this class.
  *
  * @author Fornacciari Samuele, Berni Alessio
  */
@@ -23,12 +22,14 @@ public class Gestore {
     
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    /** Creates an empty vehicle list. */
     public Gestore() {
         veicoli = new ArrayList();
         lista = null;
     }
 
     // getter
+    /** Returns a copy of the vehicle list. */
     public ArrayList<Veicolo> getVeicoli() {
         return (ArrayList<Veicolo>) veicoli.clone();
     }
@@ -36,6 +37,12 @@ public class Gestore {
     // ------------------------------------------------------------------ //
     //  FILE
 
+    /**
+     * Creates an empty CSV file with the given name.
+     *
+     * @param nome file name without extension
+     * @throws IOException if creation fails
+     */
     public void creaFile(String nome) throws IOException {
         File csv = new File(nome + ".csv");
         if (csv.createNewFile())
@@ -44,6 +51,7 @@ public class Gestore {
             System.out.println("file già esistente");
     }
 
+    /** Opens a CSV file via JFileChooser and loads the vehicles into the list. */
     public void apri() {
         JFileChooser fc = new JFileChooser();
         int ris = fc.showOpenDialog(null);
@@ -88,7 +96,7 @@ public class Gestore {
         }
     }
 
-    // BUG RISOLTO: nell'originale salvaConNome usava "lista" invece del file scelto dal JFileChooser
+    /** Saves the vehicle list to a new CSV file chosen via JFileChooser. */
     public void salvaConNome() {
         JFileChooser fc = new JFileChooser();
         int ris = fc.showSaveDialog(null);
@@ -100,6 +108,7 @@ public class Gestore {
         }
     }
 
+    /** Saves the vehicle list to the currently open file, or calls salvaConNome() if none. */
     public void salva() {
         if (lista == null) {
             salvaConNome();
@@ -109,7 +118,11 @@ public class Gestore {
         JOptionPane.showMessageDialog(null, "File salvato!");
     }
 
-    // metodo privato per evitare codice duplicato tra salva() e salvaConNome()
+    /**
+     * Writes the vehicle list to the given file in CSV format.
+     *
+     * @param file destination file
+     */
     private void scriviSuFile(File file) {
         try {
             PrintWriter pw = new PrintWriter(file);
@@ -143,6 +156,7 @@ public class Gestore {
         }
     }
 
+    /** Asks for confirmation and exits the application. */
     public void esci() {
         int scelta = JOptionPane.showConfirmDialog(null, "Uscire?",
                 "Conferma uscita", JOptionPane.YES_NO_OPTION);
@@ -154,19 +168,36 @@ public class Gestore {
     // ---------------------------------------------------------------- //
     //  MODIFICA
    
+    /**
+     * Adds a vehicle to the list.
+     *
+     * @param v vehicle to add
+     * @return true if added, false if v is null
+     */
     public boolean addVeicolo(Veicolo v) {
         if (v == null)
             return false;
         return veicoli.add(v);
     }
 
+    /**
+     * Removes a vehicle from the list.
+     *
+     * @param v vehicle to remove
+     * @return true if removed, false if v is null or not found
+     */
     public boolean removeVeicolo(Veicolo v) {
         if (v == null)
             return false;
         return veicoli.remove(v);
     }
 
-    // metodi nuovi usati dalla view
+    /**
+     * Finds a vehicle by exact plate number.
+     *
+     * @param targa plate to search
+     * @return the vehicle, or null if not found
+     */
     public Veicolo getPerTarga(String targa) {
         for (Veicolo v : veicoli) {
             if (v.getTarga().equals(targa))
@@ -175,6 +206,12 @@ public class Gestore {
         return null;
     }
 
+    /**
+     * Removes the vehicle with the given plate number.
+     *
+     * @param targa plate of the vehicle to delete
+     * @return true if removed, false if not found
+     */
     public boolean eliminaPerTarga(String targa) {
         Veicolo trovato = getPerTarga(targa);
         if (trovato == null)
@@ -182,8 +219,12 @@ public class Gestore {
         return veicoli.remove(trovato);
     }
 
-    // riceve i dati grezzi dalla view come array di stringhe,
-    // fa il parsing, costruisce l'oggetto e lo aggiunge alla lista
+    /**
+     * Builds a vehicle from raw string data and adds it to the list.
+     *
+     * @param dati array of field values from the view
+     * @return true if inserted, false if validation fails
+     */
     public boolean inserisci(String[] dati) {
         Veicolo nuovo = costruisciVeicolo(dati);
         if (nuovo == null)
@@ -192,7 +233,13 @@ public class Gestore {
         return true;
     }
 
-    // sostituisce un veicolo esistente con i nuovi dati
+    /**
+     * Replaces an existing vehicle with updated data.
+     *
+     * @param vecchio vehicle to replace
+     * @param dati    new field values from the view
+     * @return true if modified, false if validation fails
+     */
     public boolean modifica(Veicolo vecchio, String[] dati) {
         Veicolo nuovo = costruisciVeicolo(dati);
         if (nuovo == null)
@@ -203,8 +250,13 @@ public class Gestore {
         return true;
     }
 
-    // costruisce un Auto o Furgone a partire dall'array di stringhe
-    // tutta la validazione e il parsing stanno qui
+    /**
+     * Parses and validates the data array, then builds an Auto or Furgone object.
+     * Shows a JOptionPane on error and returns null.
+     *
+     * @param dati array of field values
+     * @return the built vehicle, or null on error
+     */
     private Veicolo costruisciVeicolo(String[] dati) {
         // controlla che nessun campo sia vuoto
         for (String s : dati) {
@@ -258,6 +310,13 @@ public class Gestore {
         }
     }
 
+    /**
+     * Filters vehicles by partial plate match and type.
+     *
+     * @param targa      text to search in the plate (empty = all)
+     * @param tipoFiltro "Tutti", "Automobile" or "Furgone"
+     * @return filtered list
+     */
     public ArrayList<Veicolo> cerca(String targa, String tipoFiltro) {
         ArrayList<Veicolo> risultati = new ArrayList<>();
         String testoLower = targa.trim().toLowerCase();
@@ -274,12 +333,17 @@ public class Gestore {
         return risultati;
     }
 
-    // messaggi di dialogo usati dalla view
+    /** Shows a warning dialog when no vehicle is selected. */
     public void NessunaSelezione() {
         JOptionPane.showMessageDialog(null, "Seleziona un veicolo dalla lista.",
                 "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
     }
 
+    /**
+     * Shows a confirmation dialog before deleting.
+     *
+     * @return true if the user confirmed
+     */
     public boolean confermaEliminazione() {
         int risposta = JOptionPane.showConfirmDialog(null,
                 "Sei sicuro di voler eliminare il veicolo selezionato?\nL'operazione non può essere annullata.",
@@ -289,7 +353,7 @@ public class Gestore {
 
     // ----------------------------------------------------- //
     //  INFO
-//AURA 
+    /** Shows the full vehicle list in a scrollable dialog. */
     public void visualizzaLista() {
         if (veicoli.isEmpty()) {
             JOptionPane.showMessageDialog(null, "La lista è vuota!");
@@ -327,12 +391,14 @@ public class Gestore {
         JOptionPane.showMessageDialog(null, new JScrollPane(area), "Lista Veicoli", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /** Shows application info. */
     public void about() {
         JOptionPane.showMessageDialog(null,
                 "Gestionale per una flotta di auto composta da soli furgoni e auto appartenenti ad un'azienda",
                 "About", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /** Shows the authors' names. */
     public void credits() {
         JOptionPane.showMessageDialog(null,
                 "Sviluppata da:\nFornacciari Samuele\nBerni Alessio",

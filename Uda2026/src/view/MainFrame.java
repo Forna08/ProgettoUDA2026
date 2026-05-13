@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 
 /**
+ * Main application window.
+ * Displays the vehicle list and delegates all logic to {@link controller.Gestore}.
  *
  * @author samuf
  */
@@ -19,22 +21,15 @@ public class MainFrame extends javax.swing.JFrame {
     private Gestore g = new Gestore();
 
     /**
-     * Creates new form MainFrame
+     * Initializes the form and registers all missing action listeners.
      */
     public MainFrame() {
         initComponents();
-        // blocca il riordinamento delle colonne
         jTable1.getTableHeader().setReorderingAllowed(false);
 
-        // ── listener mancanti (non generati da NetBeans) ──────────────────
-
-        // File → Salva
         jMenuItem2.addActionListener(e -> g.salva());
-
-        // File → Salva con nome
         jMenuItem3.addActionListener(e -> g.salvaConNome());
 
-        // Elimina (bottone)
         jButton2.addActionListener(e -> {
             Veicolo sel = getVeicoloSelezionato();
             if (sel == null) { g.NessunaSelezione(); return; }
@@ -44,10 +39,8 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        // Edit → Inserisci
         jMenuItem6.addActionListener(e -> apriModifica(null));
 
-        // Edit → Elimina
         jMenuItem7.addActionListener(e -> {
             Veicolo sel = getVeicoloSelezionato();
             if (sel == null) { g.NessunaSelezione(); return; }
@@ -57,23 +50,16 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        // Edit → Modifica
         jMenuItem8.addActionListener(e -> {
             Veicolo sel = getVeicoloSelezionato();
             if (sel == null) { g.NessunaSelezione(); return; }
             apriModifica(sel);
         });
 
-        // Edit → Visualizza Lista
         jMenuItem9.addActionListener(e -> g.visualizzaLista());
-
-        // Info → About
         jMenuItem5.addActionListener(e -> g.about());
-
-        // Info → Credits
         jMenuItem10.addActionListener(e -> g.credits());
 
-        // Cerca (bottone) - listener mancante nel blocco generato da NetBeans
         jButton1.addActionListener(e -> {
             String targa = jTextField1.getText();
             String tipo  = (String) jComboBox1.getSelectedItem();
@@ -82,22 +68,23 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     /**
-     * Aggiorna la JTable con tutti i veicoli presenti nel Gestore.
-     * Va chiamato ogni volta che la lista cambia.
+     * Refreshes the table with the full vehicle list from the Gestore.
      */
     public void aggiornaTabella() {
         riempiTabella(g.getVeicoli());
     }
 
     /**
-     * Restituisce il Gestore condiviso.
+     * Returns the shared Gestore instance.
+     *
+     * @return the Gestore
      */
     public Gestore getGestore() {
         return g;
     }
 
     /**
-     * Restituisce il veicolo corrispondente alla riga selezionata nella tabella.
+     * Returns the vehicle matching the selected table row, or null if none selected.
      */
     private Veicolo getVeicoloSelezionato() {
         int riga = jTable1.getSelectedRow();
@@ -107,7 +94,9 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     /**
-     * Riempie la tabella con la lista passata come parametro.
+     * Fills the table with the given vehicle list.
+     *
+     * @param lista list of vehicles to display
      */
     private void riempiTabella(ArrayList<Veicolo> lista) {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
@@ -292,14 +281,16 @@ public class MainFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    // ── metodo helper ─────────────────────────────────────────────────────────────────
+    /**
+     * Opens the edit/insert window.
+     *
+     * @param v vehicle to edit, or null for a new insertion
+     */
     private void apriModifica(Veicolo v) {
         ModificaCatalogo popUp = new ModificaCatalogo(g, this, v);
         popUp.setLocationRelativeTo(this);
         popUp.setVisible(true);
     }
-
-    // ── BOTTONI ───────────────────────────────────────────────────────────────────────
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String targa = jTextField1.getText();
@@ -317,8 +308,6 @@ public class MainFrame extends javax.swing.JFrame {
         apriModifica(null);
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    // ── MENU FILE ─────────────────────────────────────────────────────────────────────
-
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         g.apri();
         aggiornaTabella();
@@ -329,11 +318,12 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // non serve codice: la ricerca scatta solo premendo "Cerca"
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
-     * @param args the command line arguments
+     * Application entry point.
+     *
+     * @param args command line arguments (unused)
      */
     public static void main(String args[]) {
         try {
