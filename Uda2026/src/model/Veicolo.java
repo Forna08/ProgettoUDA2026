@@ -114,7 +114,7 @@ public abstract class Veicolo {
     }
 
     private void _setScadenzaAssicurazione(LocalDate scadenzaAssicurazione) {
-        if(scadenzaAssicurazione == null || scadenzscadenzaAssicurazione.isBefore(LocalDate.now()))
+        if(scadenzaAssicurazione == null || scadenzaAssicurazione.isBefore(LocalDate.now()))
             throw new IllegalArgumentException("Data di scadenza dell'assicurazione della macchina errata");
         this.scadenzaAssicurazione = scadenzaAssicurazione;
     }

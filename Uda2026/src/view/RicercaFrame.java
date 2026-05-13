@@ -2,6 +2,7 @@ package view;
 
 import controller.Gestore;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -9,13 +10,13 @@ import model.*;
 
 /**
  * RicercaFrame - finestra separata per la ricerca avanzata dei veicoli.
- * Permette di filtrare per targa (parziale) e tipo (Auto / Furgone).
+ * Non contiene logica: chiama solo g.cerca() e mostra i risultati.
  *
  * @author Fornacciari Samuele, Berni Alessio
  */
 public class RicercaFrame extends javax.swing.JFrame {
 
-    private final Gestore g;
+    private final Gestore g; // stesso Gestore passato dal MainFrame
 
     private JTextField campTarga;
     private JComboBox<String> comboTipo;
@@ -30,20 +31,22 @@ public class RicercaFrame extends javax.swing.JFrame {
     /**
      * Costruttore.
      *
-     * @param g gestore del model per accedere alla lista veicoli
+     * @param g gestore condiviso con il MainFrame
      */
     public RicercaFrame(Gestore g) {
         this.g = g;
         initComponents();
+        // mostra subito tutti i veicoli
+        aggiornaTabella(g.getVeicoli());
     }
 
     /**
-     * Inizializza tutti i componenti della finestra.
+     * Costruisce tutti i componenti grafici della finestra.
      */
     private void initComponents() {
         setTitle("Ricerca Veicoli");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(850, 420);
+        setSize(860, 420);
         setLocationRelativeTo(null);
 
         JPanel pannelloPrincipale = new JPanel(new BorderLayout(5, 5));
@@ -67,9 +70,9 @@ public class RicercaFrame extends javax.swing.JFrame {
         // premendo Invio nel campo targa lancia la ricerca
         campTarga.addActionListener(e -> eseguiRicerca());
 
-        JButton btnHome = new JButton("Chiudi");
-        btnHome.addActionListener(e -> dispose());
-        pannelloRicerca.add(btnHome);
+        JButton btnChiudi = new JButton("Chiudi");
+        btnChiudi.addActionListener(e -> dispose());
+        pannelloRicerca.add(btnChiudi);
 
         pannelloPrincipale.add(pannelloRicerca, BorderLayout.NORTH);
 
@@ -88,35 +91,27 @@ public class RicercaFrame extends javax.swing.JFrame {
         JScrollPane scrollPane = new JScrollPane(tabellaRisultati);
         pannelloPrincipale.add(scrollPane, BorderLayout.CENTER);
 
-        add(pannelloPrincipale);
+        // etichetta contatore risultati
+        JLabel lblContatore = new JLabel(" ");
+        pannelloPrincipale.add(lblContatore, BorderLayout.SOUTH);
 
-        // mostra subito tutti i veicoli
-        aggiornaTabella(g.getVeicoli());
+        add(pannelloPrincipale);
     }
 
     /**
-     * Filtra i veicoli per targa (parziale, case-insensitive) e tipo.
+     * Passa targa e tipo al Gestore e aggiorna la tabella con i risultati.
+     * Tutta la logica di filtro e' nel Gestore.
      */
     private void eseguiRicerca() {
-        String testo = campTarga.getText().trim().toLowerCase();
-        String tipoSelezionato = (String) comboTipo.getSelectedItem();
-
-        ArrayList<Veicolo> risultati = new ArrayList<>();
-        for (Veicolo v : g.getVeicoli()) {
-            boolean targaOk = testo.isEmpty() || v.getTarga().toLowerCase().contains(testo);
-            boolean tipoOk = tipoSelezionato.equals("Tutti")
-                || (tipoSelezionato.equals("Automobile") && v instanceof Auto)
-                || (tipoSelezionato.equals("Furgone") && v instanceof Furgone);
-
-            if (targaOk && tipoOk) {
-                risultati.add(v);
-            }
-        }
+        String targa = campTarga.getText();
+        String tipo  = (String) comboTipo.getSelectedItem();
+        ArrayList<Veicolo> risultati = g.cerca(targa, tipo); // logica nel Gestore
         aggiornaTabella(risultati);
     }
 
     /**
      * Riempie la tabella con la lista passata.
+     * Questo e' l'unico compito della view: mostrare i dati.
      *
      * @param lista lista di veicoli da visualizzare
      */

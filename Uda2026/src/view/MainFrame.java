@@ -10,21 +10,21 @@ import model.*;
 
 /**
  * MainFrame - finestra principale dell'applicazione.
- * Mostra la lista dei veicoli in una JTable con ricerca per targa e tipo.
+ * Contiene solo logica grafica (for, if di base).
+ * Tutta la logica di business e' delegata al Gestore.
  *
  * @author Fornacciari Samuele, Berni Alessio
  */
 public class MainFrame extends javax.swing.JFrame {
 
-    protected Gestore g = new Gestore();
+    // unico Gestore condiviso con tutte le finestre figlie
+    private final Gestore g = new Gestore();
 
-    // componenti principali
     private JTable tabellaVeicoli;
     private DefaultTableModel modelloTabella;
     private JTextField campoCerca;
     private JComboBox<String> comboTipo;
 
-    // colonne della tabella (campi comuni a tutti i veicoli)
     private static final String[] COLONNE = {
         "Targa", "Tipo", "Marca", "Modello", "Anno", "Km",
         "Scad. Assicurazione", "Scad. Revisione", "Scad. Tagliando",
@@ -39,7 +39,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     /**
-     * Inizializza tutti i componenti della finestra.
+     * Costruisce tutti i componenti grafici della finestra.
      */
     private void initComponents() {
         setTitle("Gestione Flotta Veicoli Aziendali");
@@ -47,7 +47,6 @@ public class MainFrame extends javax.swing.JFrame {
         setSize(1000, 520);
         setLocationRelativeTo(null);
 
-        // chiusura con conferma
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -58,59 +57,43 @@ public class MainFrame extends javax.swing.JFrame {
         // ---- menu bar ----
         JMenuBar menuBar = new JMenuBar();
 
-        // menu File
         JMenu menuFile = new JMenu("File");
-
         JMenuItem itemApri = new JMenuItem("Apri");
         itemApri.addActionListener(e -> {
             g.apri();
             aggiornaTabella(g.getVeicoli());
         });
-
         JMenuItem itemSalva = new JMenuItem("Salva");
         itemSalva.addActionListener(e -> g.salva());
-
         JMenuItem itemSalvaConNome = new JMenuItem("Salva con Nome");
         itemSalvaConNome.addActionListener(e -> g.salvaConNome());
-
         JMenuItem itemEsci = new JMenuItem("Esci");
         itemEsci.addActionListener(e -> g.esci());
-
         menuFile.add(itemApri);
         menuFile.add(itemSalva);
         menuFile.add(itemSalvaConNome);
         menuFile.addSeparator();
         menuFile.add(itemEsci);
 
-        // menu Modifica
         JMenu menuModifica = new JMenu("Modifica");
-
         JMenuItem itemInserisci = new JMenuItem("Inserisci");
         itemInserisci.addActionListener(e -> apriInserisci());
-
         JMenuItem itemElimina = new JMenuItem("Elimina");
-        itemElimina.addActionListener(e -> eliminaSelezionato());
-
+        itemElimina.addActionListener(e -> apriElimina());
         JMenuItem itemModifica = new JMenuItem("Modifica");
         itemModifica.addActionListener(e -> apriModifica());
-
         JMenuItem itemLista = new JMenuItem("Visualizza Lista");
-        itemLista.addActionListener(e -> aggiornaTabella(g.getVeicoli()));
-
+        itemLista.addActionListener(e -> g.visualizzaLista());
         menuModifica.add(itemInserisci);
         menuModifica.add(itemElimina);
         menuModifica.add(itemModifica);
         menuModifica.add(itemLista);
 
-        // menu Info
         JMenu menuInfo = new JMenu("Info");
-
         JMenuItem itemAbout = new JMenuItem("About");
         itemAbout.addActionListener(e -> g.about());
-
         JMenuItem itemCredits = new JMenuItem("Credits");
         itemCredits.addActionListener(e -> g.credits());
-
         menuInfo.add(itemAbout);
         menuInfo.add(itemCredits);
 
@@ -125,37 +108,28 @@ public class MainFrame extends javax.swing.JFrame {
 
         // ---- barra di ricerca ----
         JPanel pannelloRicerca = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
         pannelloRicerca.add(new JLabel("Cerca per targa:"));
         campoCerca = new JTextField(15);
         pannelloRicerca.add(campoCerca);
-
         pannelloRicerca.add(new JLabel("  Tipo:"));
         comboTipo = new JComboBox<>(new String[]{"Tutti", "Automobile", "Furgone"});
         pannelloRicerca.add(comboTipo);
-
         JButton btnCerca = new JButton("Cerca");
         btnCerca.addActionListener(e -> eseguiRicerca());
         pannelloRicerca.add(btnCerca);
-
-        // premendo Invio nel campo testo lancia la ricerca
         campoCerca.addActionListener(e -> eseguiRicerca());
-
         pannelloPrincipale.add(pannelloRicerca, BorderLayout.NORTH);
 
         // ---- tabella ----
         modelloTabella = new DefaultTableModel(COLONNE, 0) {
             @Override
             public boolean isCellEditable(int row, int col) {
-                return false; // non si modifica direttamente nella tabella
+                return false;
             }
         };
-
         tabellaVeicoli = new JTable(modelloTabella);
         tabellaVeicoli.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tabellaVeicoli.getTableHeader().setReorderingAllowed(false);
-
-        // doppio click -> apre finestra di modifica
         tabellaVeicoli.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -164,37 +138,27 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         });
-
-        JScrollPane scrollPane = new JScrollPane(tabellaVeicoli);
-        pannelloPrincipale.add(scrollPane, BorderLayout.CENTER);
+        pannelloPrincipale.add(new JScrollPane(tabellaVeicoli), BorderLayout.CENTER);
 
         // ---- pulsanti in basso ----
         JPanel pannelloPulsanti = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
         JButton btnInserisci = new JButton("Inserisci");
         btnInserisci.addActionListener(e -> apriInserisci());
-
         JButton btnModifica = new JButton("Modifica");
         btnModifica.addActionListener(e -> apriModifica());
-
         JButton btnElimina = new JButton("Elimina");
-        btnElimina.addActionListener(e -> eliminaSelezionato());
-
+        btnElimina.addActionListener(e -> apriElimina());
         pannelloPulsanti.add(btnInserisci);
         pannelloPulsanti.add(btnModifica);
         pannelloPulsanti.add(btnElimina);
-
         pannelloPrincipale.add(pannelloPulsanti, BorderLayout.SOUTH);
 
         add(pannelloPrincipale);
-        pack();
-        setSize(1000, 520); // forza dimensione dopo pack
+        setSize(1000, 520);
     }
 
-    // ---- OPERAZIONI ----
-
     /**
-     * Apre la finestra di inserimento nuovo veicolo.
+     * Apre il dialogo di inserimento e aggiorna la tabella dopo la chiusura.
      */
     private void apriInserisci() {
         ModificaCatalogoFrame f = new ModificaCatalogoFrame(this, g, null);
@@ -203,82 +167,49 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     /**
-     * Apre la finestra di modifica per il veicolo selezionato nella tabella.
+     * Legge la targa dalla riga selezionata e apre il dialogo di modifica.
      */
     private void apriModifica() {
         int riga = tabellaVeicoli.getSelectedRow();
         if (riga == -1) {
-            JOptionPane.showMessageDialog(this,
-                "Seleziona un veicolo dalla lista.",
-                "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
+            g.NessunaSelezione(); // messaggio nel Gestore
             return;
         }
         String targa = (String) modelloTabella.getValueAt(riga, 0);
-        // cerca il veicolo nel gestore tramite targa
-        Veicolo trovato = null;
-        for (Veicolo v : g.getVeicoli()) {
-            if (v.getTarga().equals(targa)) {
-                trovato = v;
-                break;
-            }
-        }
+        Veicolo trovato = g.getPerTarga(targa);
         ModificaCatalogoFrame f = new ModificaCatalogoFrame(this, g, trovato);
         f.setVisible(true);
         aggiornaTabella(g.getVeicoli());
     }
 
     /**
-     * Elimina il veicolo selezionato dopo conferma.
+     * Legge la targa dalla riga selezionata, chiede conferma al Gestore
+     * e poi chiama eliminaPerTarga().
      */
-    private void eliminaSelezionato() {
+    private void apriElimina() {
         int riga = tabellaVeicoli.getSelectedRow();
         if (riga == -1) {
-            JOptionPane.showMessageDialog(this,
-                "Seleziona un veicolo dalla lista.",
-                "Nessuna selezione", JOptionPane.WARNING_MESSAGE);
+            g.NessunaSelezione(); // messaggio nel Gestore
             return;
         }
-        int risposta = JOptionPane.showConfirmDialog(this,
-            "Sei sicuro di voler eliminare il veicolo selezionato?\nL'operazione non può essere annullata.",
-            "Conferma eliminazione",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE);
-
-        if (risposta == JOptionPane.YES_OPTION) {
+        if (g.confermaEliminazione()) { // conferma nel Gestore
             String targa = (String) modelloTabella.getValueAt(riga, 0);
-            for (Veicolo v : g.getVeicoli()) {
-                if (v.getTarga().equals(targa)) {
-                    g.removeVeicolo(v);
-                    break;
-                }
-            }
+            g.eliminaPerTarga(targa);
             aggiornaTabella(g.getVeicoli());
         }
     }
 
     /**
-     * Filtra la lista per targa (parziale) e/o tipo selezionato.
+     * Passa targa e tipo al Gestore e aggiorna la tabella con i risultati.
      */
     private void eseguiRicerca() {
-        String testo = campoCerca.getText().trim().toLowerCase();
-        String tipoSelezionato = (String) comboTipo.getSelectedItem();
-
-        ArrayList<Veicolo> risultati = new ArrayList<>();
-        for (Veicolo v : g.getVeicoli()) {
-            boolean targaOk = testo.isEmpty() || v.getTarga().toLowerCase().contains(testo);
-            boolean tipoOk = tipoSelezionato.equals("Tutti")
-                || (tipoSelezionato.equals("Automobile") && v instanceof Auto)
-                || (tipoSelezionato.equals("Furgone") && v instanceof Furgone);
-
-            if (targaOk && tipoOk) {
-                risultati.add(v);
-            }
-        }
-        aggiornaTabella(risultati);
+        String targa = campoCerca.getText();
+        String tipo = (String) comboTipo.getSelectedItem();
+        aggiornaTabella(g.cerca(targa, tipo));
     }
 
     /**
-     * Aggiorna la JTable con la lista di veicoli passata.
+     * Aggiorna la JTable con la lista passata.
      *
      * @param lista lista di veicoli da visualizzare
      */
@@ -287,17 +218,10 @@ public class MainFrame extends javax.swing.JFrame {
         for (Veicolo v : lista) {
             String tipo = (v instanceof Auto) ? "Automobile" : "Furgone";
             modelloTabella.addRow(new Object[]{
-                v.getTarga(),
-                tipo,
-                v.getMarca(),
-                v.getModello(),
-                v.getAnno(),
-                v.getKm(),
-                v.getScadenzaAssicurazione(),
-                v.getScadenzaRevisione(),
-                v.getScadenzaTagliando(),
-                v.getClasseEnergetica(),
-                v.getConsumo()
+                v.getTarga(), tipo, v.getMarca(), v.getModello(),
+                v.getAnno(), v.getKm(),
+                v.getScadenzaAssicurazione(), v.getScadenzaRevisione(),
+                v.getScadenzaTagliando(), v.getClasseEnergetica(), v.getConsumo()
             });
         }
     }
@@ -316,9 +240,8 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         } catch (Exception ex) {
-            // se Nimbus non c'è si usa il look and feel di default
+            // look and feel di default
         }
-
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
     }
 }
