@@ -394,14 +394,17 @@ public class Gestore {
     /** Shows application info. */
     public void about() {
         JOptionPane.showMessageDialog(null,
-                "Gestionale per una flotta di auto composta da soli furgoni e auto appartenenti ad un'azienda",
+                "Gestionale per una flotta di auto composta da soli furgoni e auto appartenenti ad un'azienda"
+                        + "\n è possibile cercare per targa, visualizzare solo le auto e solo i furgoni"
+                        + "\n selezionare un veicolo direttamente nella tabella se lo si vuole modificare o eliminare"
+                        + "\n\n !SALVARE LE MODIFICHE MANUALMENTE!",
                 "About", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /** Shows the authors' names. */
     public void credits() {
         JOptionPane.showMessageDialog(null,
-                "Sviluppata da:\nFornacciari Samuele\nBerni Alessio",
+                "Applicativo Sviluppato da:\nBerni Alessio\nFornacciari Samuele",
                 "Credits", JOptionPane.INFORMATION_MESSAGE);
     }
 }
